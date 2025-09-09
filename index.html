@@ -1,0 +1,1213 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Florence Roleplay TTS — Bot TTS italiano per Discord</title>
+  <meta name="description" content="Florence Roleplay TTS è il bot TTS italiano per Discord: un solo comando /tts, lettura messaggi in vocale, coda smart, sicurezza e permessi minimi." />
+  <meta name="theme-color" content="#0ea5e9" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Florence Roleplay TTS — Bot TTS italiano" />
+  <meta property="og:description" content="Un solo comando /tts. Legge nome + messaggio nel canale vocale associato. Pronto per tutti i server." />
+  <meta property="og:image" content="assets/logo.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/webp" href="assets/logo.webp?v=4" />
+
+  <style>
+    body { opacity: 0; transition: opacity .8s ease; }
+    body.page-loaded { opacity: 1; }
+
+    .typing { border-right: 2px solid var(--brand); white-space: nowrap; overflow: hidden; width: 0; animation: typing 4s steps(40,end) forwards, blink .75s step-end infinite; }
+    @keyframes typing { from { width: 0 } to { width: 100% } }
+    @keyframes blink { 50% { border-color: transparent } }
+    .card:hover, .btn:hover {
+      box-shadow: 0 0 15px rgba(14,165,233,.6), 0 0 30px rgba(167,139,250,.4);
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(6px);
+    }
+    :root {
+      --bg: #0b1220;
+      --bg-soft: #0f172a;
+      --panel: #0f1c2f;
+      --panel-2: #0b2236;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --brand: #0ea5e9;
+      --brand-2: #22d3ee;
+      --accent: #a78bfa;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --err: #ef4444;
+      --shadow: 0 10px 25px rgba(2,6,23,.45);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --maxw: 1200px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, var(--bg) 0%, #0a0f1b 100%);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      scroll-behavior: smooth;
+    }
+
+    a {
+      color: var(--brand);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header.nav {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(11,18,32,0.85), rgba(11,18,32,0.55));
+      border-bottom: 1px solid rgba(148,163,184,0.1);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 30% 30%, var(--brand-2), var(--brand));
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .logo svg {
+      width: 24px;
+      height: 24px;
+      fill: white;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 18px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--text);
+      opacity: 0.9;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+
+    nav a:hover {
+      background: rgba(255,255,255,0.06);
+      text-decoration: none;
+    }
+
+    .cta {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      appearance: none;
+      border: none;
+      background: var(--brand);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform .08s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .btn.outline {
+      background: transparent;
+      border: 1px solid rgba(148,163,184,0.25);
+      color: var(--text);
+    }
+
+    .hero {
+      padding: 56px 0 24px 0;
+      background: radial-gradient(1200px 400px at 50% -120px, rgba(34,211,238,0.18), transparent),
+                  radial-gradient(900px 400px at 80% -80px, rgba(14,165,233,0.22), transparent);
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    @media (max-width: 980px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .title {
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.15;
+      margin: 8px 0 12px 0;
+      font-weight: 800;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 18px;
+      margin: 0 0 22px 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #d1fae5;
+      background: rgba(34,197,94,.15);
+      border: 1px solid rgba(34,197,94,.35);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid rgba(148,163,184,0.12);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+    }
+
+    .hero-mock {
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+    }
+
+    .term {
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      color: #d1d5db;
+      background: #0a1220;
+      border-radius: 12px;
+      border: 1px solid rgba(148,163,184,0.15);
+      padding: 14px;
+      height: 280px;
+      overflow: auto;
+    }
+
+    .term .g {
+      color: #a7f3d0;
+    }
+
+    .term .c {
+      color: #93c5fd;
+    }
+
+    .term .y {
+      color: #fde68a;
+    }
+
+    .kpis {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    @media (max-width: 780px) {
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .kpi {
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(148,163,184,0.1);
+    }
+
+    .kpi b {
+      display: block;
+      font-size: 20px;
+    }
+
+    .section {
+      padding: 48px 0;
+    }
+
+    .section h2 {
+      font-size: 28px;
+      margin: 0 0 10px 0;
+    }
+
+    .muted {
+      color: var(--muted);
+      margin: 0 0 16px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) {
+      .grid-3 { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 680px) {
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(148,163,184,0.1);
+      border-radius: 14px;
+      padding: 16px;
+      transition: transform .08s ease, border-color .2s ease, background .2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(148,163,184,0.25);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      margin-right: 8px;
+    }
+
+    .list {
+      display: grid;
+      gap: 6px;
+      margin: 10px 0 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px dashed rgba(148,163,184,0.2);
+    }
+
+    .num {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(14,165,233,0.2);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      border: 1px solid rgba(14,165,233,0.4);
+    }
+
+    .code {
+      font-family: var(--mono);
+      background: #0b1220;
+      border: 1px solid rgba(148,163,184,0.2);
+      border-radius: 12px;
+      padding: 12px;
+      overflow: auto;
+      white-space: pre;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .table thead tr {
+      background: rgba(148,163,184,0.08);
+    }
+
+    .table th,
+    .table td {
+      border: 1px solid rgba(148,163,184,0.12);
+      padding: 10px 12px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .pill {
+      display: inline-flex;
+      border: 1px solid rgba(148,163,184,0.25);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      gap: 6px;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .notice {
+      margin: 12px 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.35);
+      color: #fde68a;
+    }
+
+    .ok {
+      background: rgba(34,197,94,0.14);
+      border-color: rgba(34,197,94,0.35);
+      color: #bbf7d0;
+    }
+
+    .danger {
+      background: rgba(239,68,68,0.14);
+      border-color: rgba(239,68,68,0.35);
+      color: #fecaca;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    footer {
+      padding: 40px 0 60px 0;
+      border-top: 1px solid rgba(148,163,184,0.12);
+      background: linear-gradient(180deg, rgba(11,18,32,0.6), rgba(11,18,32,1));
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .copy-btn {
+      border: 1px solid rgba(148,163,184,0.25);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 780px) {
+      .toc { grid-template-columns: 1fr; }
+    }
+
+    .toc a {
+      display: block;
+      padding: 10px 12px;
+      border: 1px solid rgba(148,163,184,0.2);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .faq q {
+      display: block;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .faq .qa {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(148,163,184,0.12);
+      margin: 10px 0;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 980px) { .split { grid-template-columns: 1fr; } }
+
+    .sr-only {
+      position: absolute !important;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .sep { height: 1px; background: rgba(148,163,184,0.15); margin: 18px 0; }
+
+  :root {
+    --ease: cubic-bezier(.2,.7,.2,1);
+    --dur: 620ms;
+    --dur-slow: 1200ms;
+  }
+
+  nav a {
+    position: relative;
+    background:
+      linear-gradient(currentColor, currentColor) left bottom / 0 2px no-repeat;
+    transition: background-size .25s var(--ease), color .25s var(--ease);
+  }
+  nav a:hover {
+    background-size: 100% 2px;
+  }
+
+  .hero {
+    position: relative;
+    overflow: clip;
+  }
+  .hero::before,
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: auto auto -120px -160px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(closest-side, rgba(14,165,233,.28), transparent 70%);
+    filter: blur(20px);
+    transform: translate3d(0,0,0);
+    animation: floatXY var(--dur-slow) var(--ease) infinite alternate;
+    pointer-events: none;
+  }
+  .hero::after {
+    inset: -140px -140px auto auto;
+    background: radial-gradient(closest-side, rgba(167,139,250,.28), transparent 70%);
+    animation-delay: 300ms;
+    width: 520px;
+    height: 520px;
+  }
+
+  .logo {
+    animation: breathe 3.2s ease-in-out infinite;
+    will-change: transform, filter;
+  }
+
+  .card, .panel {
+    will-change: transform, box-shadow;
+    transition: transform .18s var(--ease), box-shadow .3s var(--ease), border-color .2s var(--ease), background .2s var(--ease);
+  }
+  .card:hover, .panel:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 16px 40px rgba(2,6,23,.45);
+  }
+
+  .btn {
+    position: relative;
+    overflow: hidden;
+    transform: translateZ(0);
+  }
+  .btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.12) 30%, transparent 60%);
+    transform: translateX(-120%);
+    transition: transform .55s var(--ease);
+    pointer-events: none;
+  }
+  .btn:hover::after {
+    transform: translateX(120%);
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(14,165,233,.25);
+  }
+  .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 8px 20px rgba(14,165,233,.2);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  .reveal.reveal--in {
+    animation: fadeUp var(--dur) var(--ease) both;
+    animation-delay: var(--stagger, 0ms);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo,
+    .hero::before,
+    .hero::after,
+    .reveal.reveal--in {
+      animation: none !important;
+    }
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .btn,
+    .card,
+    .panel {
+      transition: none !important;
+    }
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(.995);
+      filter: saturate(.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: saturate(1);
+    }
+  }
+  @keyframes breathe {
+    0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(34,211,238,0.25)); }
+    50% { transform: scale(1.035); filter: drop-shadow(0 10px 25px rgba(34,211,238,0.35)); }
+    100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(34,211,238,0.25)); }
+  }
+  @keyframes floatXY {
+    from { transform: translate(-10px, 0); }
+    to   { transform: translate(10px, -6px); }
+  }
+  body {
+    position: relative;
+    isolation: isolate;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.06) 1.2px, transparent 1.2px);
+    background-size: 18px 18px;
+    animation: panDots 24s linear infinite;
+    pointer-events: none;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: -20% -10% auto -10%;
+    height: 60vh;
+    z-index: -1;
+    background:
+      radial-gradient(closest-side at 25% 60%, rgba(14,165,233,.25), transparent 70%),
+      radial-gradient(closest-side at 75% 40%, rgba(167,139,250,.25), transparent 70%),
+      radial-gradient(closest-side at 50% 10%, rgba(34,197,94,.18), transparent 70%);
+    filter: blur(30px);
+    animation: floatXY 14s var(--ease) infinite alternate;
+    pointer-events: none;
+  }
+
+  .gradtext {
+    background: linear-gradient(120deg, #22d3ee, #0ea5e9, #a78bfa, #22c55e);
+    background-size: 220% 220%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradientShift 8s ease-in-out infinite;
+  }
+
+  .btn {
+    background-image: linear-gradient(135deg, #0ea5e9, #22d3ee, #a78bfa);
+    background-size: 200% 200%;
+    transition: transform .18s var(--ease), box-shadow .35s var(--ease), background-position .6s var(--ease), background .3s var(--ease);
+    box-shadow: 0 10px 28px rgba(14,165,233,.28);
+    will-change: transform, box-shadow, background-position;
+  }
+  .btn:hover {
+    background-position: 80% 20%;
+  }
+
+  .rainbow {
+    position: relative;
+    border: 2px solid transparent;
+    background:
+      linear-gradient(180deg, var(--panel), var(--panel-2)) padding-box,
+      conic-gradient(from 0deg, #22d3ee, #0ea5e9, #a78bfa, #22c55e, #22d3ee) border-box;
+    animation: spinHue 14s linear infinite;
+  }
+
+  .badge {
+    box-shadow: 0 0 0 2px rgba(34,197,94,.15), 0 6px 20px rgba(34,197,94,.18);
+  }
+
+  .card:hover {
+    box-shadow: 0 18px 45px rgba(2,6,23,.55), 0 0 0 1px rgba(148,163,184,.25) inset, 0 0 0 1px rgba(14,165,233,.25);
+  }
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(10px);
+    opacity: .7;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    animation: floatXY var(--dur-slow) var(--ease) infinite alternate;
+  }
+  .orb-a { width: 180px; height: 180px; left: 6%; top: 20%; background: radial-gradient(circle, rgba(34,211,238,.38), transparent 70%); }
+  .orb-b { width: 240px; height: 240px; right: 8%; top: 10%; background: radial-gradient(circle, rgba(167,139,250,.34), transparent 70%); animation-delay: .5s; }
+  .orb-c { width: 160px; height: 160px; right: 30%; bottom: -30px; background: radial-gradient(circle, rgba(34,197,94,.28), transparent 70%); animation-delay: .9s; }
+
+  .tilt {
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: transform .15s var(--ease);
+  }
+
+  @keyframes panDots {
+    from { background-position: 0 0; }
+    to   { background-position: 180px 180px; }
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes spinHue {
+    to { filter: hue-rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <img src="assets/logo.webp" alt="Florence Roleplay TTS" style="width:100%;height:100%;object-fit:contain;border-radius:10px;">
+        </div>
+        <h1>Florence Roleplay TTS</h1>
+        <span class="pill" title="Stato">⚡<span>Online</span></span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#features">Funzioni</a></li>
+          <li><a href="#how">Come funziona</a></li>
+          <li><a href="#install">Installazione</a></li>
+          <li><a href="#docs">Comandi</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#privacy">Privacy</a></li>
+        </ul>
+      </nav>
+      <div class="cta">
+        <a class="btn" href="https://discord.com/oauth2/authorize?client_id=1414936308140474459&permissions=8&integration_type=0&scope=bot+applications.commands" target="_blank" rel="noopener">➕ Invita il bot</a>
+        <a class="btn outline" href="#docs">📖 Documentazione</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="container hero-inner">
+        <div>
+          <span class="badge">🇮🇹 TTS 100% italiano · Listening to <b>TTS attivo</b></span>
+          <h2 class="title">Un solo comando <span class="gradtext">/tts</span>.<br/><span class="gradtext typing">Il tuo server parla da solo.</span></h2>
+          <p class="subtitle">Florence Roleplay TTS legge <b>nome + messaggio</b> nel canale vocale collegato alla chat dove scrivi. Coda intelligente, permessi minimi, status professionale.</p>
+          <div class="cta">
+            <a class="btn" href="https://discord.com/oauth2/authorize?client_id=1414936308140474459&permissions=8&integration_type=0&scope=bot+applications.commands" target="_blank" rel="noopener">Invita ora</a>
+            <a class="btn outline" href="#install">Guida rapida</a>
+          </div>
+          <div class="kpis">
+            <div class="kpi"><b>1</b><span>Comando unico</span></div>
+            <div class="kpi"><b>0</b><span>Config obbligatorie</span></div>
+            <div class="kpi"><b>∞</b><span>Server supportati</span></div>
+          </div>
+        </div>
+        <div class="panel hero-mock rainbow tilt">
+          <div class="term" aria-label="Anteprima terminale">
+$ <span class="g">/tts</span> — attivo in <span class="y">#chat-vocale-ufficio</span>
+• <span class="c">[INFO]</span> Il bot legge un messaggio alla volta: attendi che finisca prima di inviarne un altro.
+• <span class="c">[JOIN]</span> Connesso a vocale: <span class="y">💼・Ufficio Direttore Generale</span>
+• <span class="c">[SAY ]</span> <span class="y">FRA_LANG</span>: Ciao a tutti!
+• <span class="c">[SAY ]</span> <span class="y">Marco</span>: Benvenuti su Florence Roleplay TTS.
+• <span class="c">[STOP]</span> /tts di nuovo per disattivare.
+          </div>
+        </div>
+      </div>
+      <span class="orb orb-a"></span>
+      <span class="orb orb-b"></span>
+      <span class="orb orb-c"></span>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container">
+        <h2>Funzioni principali</h2>
+        <p class="muted">Tutto ciò che serve per un TTS pulito e affidabile nei server italiani.</p>
+        <div class="grid-3">
+          <div class="card tilt">
+            <p><strong>Comando unico</strong></p>
+            <p class="muted">/tts attiva o disattiva la lettura nella chat vocale collegata. Nessun setup.</p>
+            <ul class="list">
+              <li>✔ Toggle on/off con lo stesso comando</li>
+              <li>✔ Messaggio informativo automatico</li>
+              <li>✔ Test audio immediato</li>
+            </ul>
+          </div>
+          <div class="card tilt">
+            <p><strong>Coda intelligente</strong></p>
+            <p class="muted">Legge un messaggio alla volta, avvisando gli utenti quando la coda è occupata.</p>
+            <ul class="list">
+              <li>✔ Antiflood integrato</li>
+              <li>✔ Priorità FIFO</li>
+              <li>✔ Log trasparente</li>
+            </ul>
+          </div>
+          <div class="card tilt">
+            <p><strong>Compatibile ovunque</strong></p>
+            <p class="muted">Comandi globali: invitabile e utilizzabile in qualsiasi server.</p>
+            <ul class="list">
+              <li>✔ Registrazione globale</li>
+              <li>✔ DM safe (blocco gentilmente)</li>
+              <li>✔ Permessi minimi</li>
+            </ul>
+          </div>
+          <div class="card tilt">
+            <p><strong>Italiano naturale</strong></p>
+            <p class="muted">Voce Google TTS in italiano, chiara e fluida, con pulizia link.</p>
+            <ul class="list">
+              <li>✔ Rimozione URL → “un link”</li>
+              <li>✔ Nomi utente + messaggio</li>
+              <li>✔ Allegati annunciati</li>
+            </ul>
+          </div>
+          <div class="card tilt">
+            <p><strong>Stato professionale</strong></p>
+            <p class="muted">Presence “Listening to <b>TTS attivo</b>”. Minimal e coerente.</p>
+            <ul class="list">
+              <li>✔ Brand sobrio</li>
+              <li>✔ UI a card</li>
+              <li>✔ Accessibilità di base</li>
+            </ul>
+          </div>
+          <div class="card tilt">
+            <p><strong>Owner tools</strong></p>
+            <p class="muted">Comando /servers (solo owner) per elenco guild, icone e inviti.</p>
+            <ul class="list">
+              <li>✔ Ephemeral</li>
+              <li>✔ Invite auto se permesso</li>
+              <li>✔ Usi di audit</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="section">
+      <div class="container split">
+        <div>
+          <h2>Come funziona</h2>
+          <p class="muted">Attivalo nella chat testuale collegata a una vocale: il bot entrerà nella vocale giusta e leggerà i messaggi in ordine.</p>
+          <div class="step">
+            <div class="num">1</div>
+            <div>
+              <b>Invita il bot al server</b>
+              <p class="muted">Usa il link OAuth2 con i permessi minimi consigliati.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="num">2</div>
+            <div>
+              <b>Vai nella chat della vocale</b>
+              <p class="muted">Scrivi nella chat <i>collegata</i> alla voce dove vuoi far parlare il bot.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="num">3</div>
+            <div>
+              <b>Esegui /tts</b>
+              <p class="muted">Il bot si collega alla vocale associata, annuncia la coda, fa un test audio.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="num">4</div>
+            <div>
+              <b>Scrivi normalmente</b>
+              <p class="muted">Il bot leggerà "Nome dice: Messaggio". /tts di nuovo per spegnere.</p>
+            </div>
+          </div>
+          <div class="notice ok">ℹ️ Consiglio: evita di incollare muri di testo. Il TTS rende meglio con frasi brevi.</div>
+        </div>
+        <div class="panel" style="padding:16px">
+          <h3 style="margin-top:0">Permessi minimi suggeriti</h3>
+          <ul class="list">
+            <li>🔊 <b>Connect</b> (collegarsi in vocale)</li>
+            <li>🎙️ <b>Speak</b> (parlare in vocale)</li>
+            <li>💬 <b>Send Messages</b> (mandare avvisi in chat)</li>
+            <li>👁️ <b>View Channels</b> (vedere le chat collegate)</li>
+          </ul>
+          <div class="sep"></div>
+          <p class="small">Puoi anche usare Administrator (permissions=8), ma non è necessario né consigliato.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="install" class="section">
+      <div class="container">
+        <h2>Installazione</h2>
+        <p class="muted">Link invito pronto con permessi minimi. Puoi modificarli dal Developer Portal se serve.</p>
+        <div class="panel" style="padding:16px">
+          <div class="grid-2">
+            <div>
+              <p><b>Invito rapido</b></p>
+              <div class="code" id="invite-url">https://discord.com/oauth2/authorize?client_id=1414936308140474459&permissions=8&integration_type=0&scope=bot+applications.commands</div>
+              <p><button class="copy-btn" data-copy="#invite-url">Copia link</button></p>
+              <p class="small">Permessi 274881726464 ≈ Connect, Speak, Send Messages, View Channels, Read Message History, Use Slash Commands.</p>
+            </div>
+            <div>
+              <p><b>Setup locale (opzionale)</b></p>
+              <div class="code">.env
+DISCORD_TOKEN=your_token
+CLIENT_ID=1414936308140474459
+VOICE_LANG=it
+TTS_SPEED=1
+              </div>
+              <div class="code">bash
+# Node consigliato
+node -v   # v22+
+
+# Dipendenze principali
+npm i discord.js @discordjs/voice google-tts-api prism-media dotenv
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="docs" class="section">
+      <div class="container">
+        <h2>Comandi</h2>
+        <p class="muted">Elenco conciso dei comandi slash disponibili.</p>
+        <div class="panel" style="padding:0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Comando</th>
+                <th>Uso</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>/tts</code></td>
+                <td>Attiva o disattiva la lettura TTS nella chat vocale collegata.</td>
+                <td>Invia un avviso in chat: "Il bot legge un messaggio alla volta".</td>
+              </tr>
+              <tr>
+                <td><code>/servers</code></td>
+                <td>Mostra elenco server dove è presente il bot (solo owner).</td>
+                <td>Restituisce Nome, ID, icona e tenta la generazione link invito.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="notice">💡 Suggerimento: usa <b>/tts</b> nella chat testuale associata alla voce dove vuoi far parlare il bot.</p>
+      </div>
+    </section>
+
+    <section id="privacy" class="section">
+      <div class="container">
+        <h2>Privacy & Sicurezza</h2>
+        <p class="muted">Il bot non memorizza storici di messaggi. Elabora solo il testo necessario per generare l'audio TTS in tempo reale.</p>
+        <div class="grid-3">
+          <div class="card tilt">
+            <b>Nessun log persistente</b>
+            <p class="muted">I messaggi letti non vengono salvati su database. Log minimi in console per debug.</p>
+          </div>
+          <div class="card tilt">
+            <b>Permessi minimi</b>
+            <p class="muted">Si limita a Connect, Speak, Send Messages e View Channels. Niente Admin.</p>
+          </div>
+          <div class="card tilt">
+            <b>Trasparenza</b>
+            <p class="muted">Messaggi informativi in chat e status chiaro. Comandi globali firmati Discord.</p>
+          </div>
+        </div>
+        <div class="notice">Se riscontri abusi, rimuovi il bot dal server e segnala l'accaduto agli admin locali.</div>
+      </div>
+    </section>
+
+    <section id="faq" class="section">
+      <div class="container">
+        <h2>FAQ</h2>
+        <p class="muted">Domande frequenti su installazione, uso e limiti.</p>
+        <div class="faq">
+          <div class="qa">
+            <q>Perché il bot entra nella vocale sbagliata?</q>
+            <p>Usa <b>/tts</b> nella <i>chat testuale collegata</i> alla vocale desiderata. Il bot si aggancia a quella voce specifica.</p>
+          </div>
+          <div class="qa">
+            <q>Il bot non parla, come mai?</q>
+            <p>Controlla i permessi <b>Connect</b> e <b>Speak</b> sul canale. Se occupi la coda, attendi: il bot legge un messaggio alla volta.</p>
+          </div>
+          <div class="qa">
+            <q>Posso usarlo su più server?</q>
+            <p>Sì. Il comando è registrato globalmente: basta invitare il bot in un nuovo server.</p>
+          </div>
+          <div class="qa">
+            <q>Funziona nei DM?</q>
+            <p>No. È progettato per lavorare nei server, dove esistono canali vocali collegati.</p>
+          </div>
+          <div class="qa">
+            <q>Esiste un comando per vedere i server?</q>
+            <p>Sì, <b>/servers</b> è attivo solo per l'owner e restituisce Nome, ID, icona e, se possibile, un invito.</p>
+          </div>
+          <div class="qa">
+            <q>Serve Administrator?</q>
+            <p>No. Usa i <b>permessi minimi</b> indicati sopra. Administrator è sconsigliato.</p>
+          </div>
+          <div class="qa">
+            <q>Il bot filtra i link?</q>
+            <p>Sì. I link vengono pronunciati come "un link" per una lettura più pulita.</p>
+          </div>
+          <div class="qa">
+            <q>Come si disattiva?</q>
+            <p>Esegui di nuovo <b>/tts</b> nello stesso canale: il bot lascerà la vocale e pulirà la sessione.</p>
+          </div>
+          <div class="qa">
+            <q>Lingue supportate?</q>
+            <p>Ottimizzato per l'italiano. È possibile cambiare VOICE_LANG nel .env per test locale.</p>
+          </div>
+          <div class="qa">
+            <q>Limiti di testo?</q>
+            <p>Evita paragrafi estremi. Il bot legge frasi sequenziali. Ogni messaggio viene messo in coda.</p>
+          </div>
+          <div class="qa">
+            <q>Il bot memorizza dati personali?</q>
+            <p>No. Elabora il testo solo per generare l'audio istantaneo e poi scarta.</p>
+          </div>
+          <div class="qa">
+            <q>Posso contribuire al codice?</q>
+            <p>Se pubblicato, troverai il repository linkato in questa pagina. In alternativa, contatta l'owner.</p>
+          </div>
+          <div class="qa">
+            <q>Posso limitare l'uso a ruoli specifici?</q>
+            <p>Configura i permessi del comando nel server (Gestisci Comandi) o crea canali dedicati.</p>
+          </div>
+          <div class="qa">
+            <q>Compatibilità Node?</q>
+            <p>Consigliato Node 22+. Dipendenze principali: discord.js 14, @discordjs/voice 0.19, google-tts-api.</p>
+          </div>
+          <div class="qa">
+            <q>Qual è lo stato del bot?</q>
+            <p>Presence: <i>Listening to TTS attivo</i>. Indica che il bot è pronto e in ascolto.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="grid-3">
+        <div>
+          <p><b>Florence Roleplay TTS</b></p>
+          <p class="small">Bot TTS italiano per Discord. Un solo comando, zero pensieri.</p>
+          <p class="small">© <span id="y"></span> Tutti i diritti riservati.</p>
+        </div>
+        <div>
+          <p><b>Link rapidi</b></p>
+          <ul class="list">
+            <li><a href="#install">Invita il bot</a></li>
+            <li><a href="#docs">Comandi</a></li>
+            <li><a href="#privacy">Privacy</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <p><b>Contatti</b></p>
+          <ul class="list">
+            <li>Discord: <span class="pill">Florence Roleplay TTS</span></li>
+            <li>Email: <span class="pill">In progress...</span></li>
+            <li>Stato: <span class="pill">Listening to <b>TTS attivo</b></span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Page load fade
+    window.addEventListener('load', () => {
+      document.body.classList.add('page-loaded');
+    });
+
+    // Parallax hero elements
+    document.addEventListener('mousemove', e => {
+      const hero = document.getElementById('hero');
+      if (!hero) return;
+      const x = (e.clientX / window.innerWidth - 0.5) * 10;
+      const y = (e.clientY / window.innerHeight - 0.5) * 10;
+      hero.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    // Simple particles
+    const canvas = document.getElementById('particles');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let w,h,particles;
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        particles = Array.from({length: 60}, () => ({
+          x: Math.random()*w,
+          y: Math.random()*h,
+          r: Math.random()*2+1,
+          dx: (Math.random()-0.5)*0.5,
+          dy: (Math.random()-0.5)*0.5
+        }));
+      }
+      function draw() {
+        ctx.clearRect(0,0,w,h);
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+          ctx.fill();
+          p.x += p.dx; p.y += p.dy;
+          if (p.x<0||p.x>w) p.dx*=-1;
+          if (p.y<0||p.y>h) p.dy*=-1;
+        });
+        requestAnimationFrame(draw);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+      draw();
+    }
+
+    document.getElementById('y').textContent = new Date().getFullYear();
+    document.querySelectorAll('[data-copy]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sel = btn.getAttribute('data-copy');
+        const el = document.querySelector(sel);
+        if (!el) return;
+        const text = el.textContent.trim();
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copiato!';
+          setTimeout(() => btn.textContent = 'Copia link', 1200);
+        });
+      });
+    });
+    const io = new IntersectionObserver((ents) => {
+      ents.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add('reveal--in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    const revealSel = '.card, .panel, .kpi, .step, .title, .subtitle, .hero .cta, .grid-2 > *, .grid-3 > *';
+    document.querySelectorAll(revealSel).forEach((el, i) => {
+      el.classList.add('reveal');
+      el.style.setProperty('--stagger', `${(i % 12) * 45}ms`);
+      io.observe(el);
+    });
+    function adjustHashScroll() {
+      if (window.location.hash) {
+        const el = document.querySelector(window.location.hash);
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const y = window.scrollY + rect.top - 70;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
+    window.addEventListener('hashchange', adjustHashScroll);
+    window.addEventListener('load', adjustHashScroll);
+    (function(){
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isSmall = window.matchMedia('(max-width: 820px)').matches;
+      if (prefersReduced || isSmall) return;
+      const maxTilt = 6;
+      function attachTilt(el) {
+        let rect;
+        function onMove(e) {
+          rect = rect || el.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+          const rx = (maxTilt/2 - y * maxTilt).toFixed(2);
+          const ry = (-maxTilt/2 + x * maxTilt).toFixed(2);
+          el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0)`;
+        }
+        function onLeave() {
+          rect = null;
+          el.style.transform = 'perspective(900px) rotateX(0) rotateY(0) translateZ(0)';
+        }
+        el.addEventListener('mousemove', onMove);
+        el.addEventListener('mouseleave', onLeave);
+      }
+      document.querySelectorAll('.tilt').forEach(attachTilt);
+    })();
+  </script>
+</body>
+</html>
